@@ -2,7 +2,7 @@
 
 ## Introduction
 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project.
+Kedro plugin that allows creation of partitioned nodes (nodes that process each partition in parallel)
 
 ## Getting Started
 
