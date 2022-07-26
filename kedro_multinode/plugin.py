@@ -7,8 +7,8 @@ from kedro.framework.hooks import hook_impl
 from kedro.extras.datasets.json import JSONDataSet
 from kedro.io import PartitionedDataSet
 
-from multinode import _SlicerNode, _MultiNode
-from utils.string import UPath
+from kedro_multinode.multinode import _SlicerNode, _MultiNode
+from kedro_multinode.utils.string import UPath
 
 
 class MultiNodeEnabler:

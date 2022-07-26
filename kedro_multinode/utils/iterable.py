@@ -3,7 +3,7 @@
 from functools import reduce
 from typing import Dict, Iterable, List, Tuple, Union
 
-from .typing import T, IsFunction
+from kedro_multinode.utils.typing import T, IsFunction
 
 def firstorlist(lst: List[T]) -> Union[T, List[T]]:
     """Return the first element if the list is a single element list.

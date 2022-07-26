@@ -14,15 +14,15 @@ from typing_extensions import Literal, NotRequired
 
 from kedro.pipeline.node import Node
 from kedro.pipeline import node
-from .utils.constants import MAX_NODES, MAX_WORKERS
-from .utils.other import (
+from kedro_multinode.utils.constants import MAX_NODES, MAX_WORKERS
+from kedro_multinode.utils.other import (
     nonefy,
     truthify,
 )
-from .utils.string import (
+from kedro_multinode.utils.string import (
     get_filepath_without_extension,
 )
-from .utils.iterable import (
+from kedro_multinode.utils.iterable import (
     firstorlist,
     partition,
     tolist,
@@ -30,7 +30,7 @@ from .utils.iterable import (
     optionaltolist,
 )
 from kedro.pipeline import Pipeline
-from .utils.typing import T, Args, IsFunction
+from kedro_multinode.utils.typing import T, Args, IsFunction
 
 _Partitioned = Dict[str, Callable[[], Any]]
 
