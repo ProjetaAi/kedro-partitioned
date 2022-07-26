@@ -1,4 +1,4 @@
-# projetaai
+# kedro-multinode
 
 ## Introduction
 
