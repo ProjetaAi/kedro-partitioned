@@ -1,0 +1,12 @@
+[flake8]
+exclude =
+    .git
+    docs
+    __pycache__
+    *.egg-info
+    .pytest_cache
+per-file-ignores =
+    __init__.py:F401,F403
+max-line-length = 79
+ignore = ANN101,ANN102,W503,D401,ANN401
+suppress-none-returning = True

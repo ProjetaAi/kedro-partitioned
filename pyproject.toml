@@ -1,0 +1,31 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = ["setuptools>=45.0", "wheel"]
+
+[tool.pytest.ini_options]
+addopts = """
+-x tests kedro-multinode \
+--disable-warnings \
+--capture=tee-sys \
+--doctest-modules \
+--cov-report term-missing \
+--cov-report xml \
+--cov-report html \
+--junitxml=junit/test-results.xml \
+--cov kedro-multinode -ra"""
+
+[tool.coverage.report]
+exclude_lines = ["pragma: no cover", "raise NotImplementedError"]
+fail_under = 0
+show_missing = true
+
+[tool.yapf]
+based_on_style = "pep8"
+align_closing_bracket_with_visual_indent = true
+allow_multiline_dictionary_keys = true
+coalesce_brackets = true
+dedent_closing_brackets = true
+split_arguments_when_comma_terminated = true
+allow_split_before_dict_value = false
+split_before_binary_operator = true
+split_before_arithmetic_operator = true
