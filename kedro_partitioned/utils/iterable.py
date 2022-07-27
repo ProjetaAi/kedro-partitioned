@@ -5,6 +5,7 @@ from typing import Dict, Iterable, List, Tuple, Union
 
 from kedro_partitioned.utils.typing import T, IsFunction
 
+
 def firstorlist(lst: List[T]) -> Union[T, List[T]]:
     """Return the first element if the list is a single element list.
 

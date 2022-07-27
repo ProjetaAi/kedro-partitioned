@@ -86,9 +86,7 @@ class MultiNodeEnabler:
                         f'`{type(partitioned)}`'
 
             elif isinstance(node, _SlicerNode):
-                partitioned = catalog._get_dataset(
-                    node.original_output
-                )
+                partitioned = catalog._get_dataset(node.original_output)
                 assert isinstance(partitioned, PartitionedDataSet),\
                     f'multinode received "{node.original_output}" as a '\
                     f'`PartitionedDataSet`, although it is a '\
@@ -103,5 +101,6 @@ class MultiNodeEnabler:
                         credentials=partitioned._credentials
                     )
                 )
+
 
 hooks = MultiNodeEnabler()

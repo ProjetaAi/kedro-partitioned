@@ -5,6 +5,7 @@ from typing import Type
 from kedro_partitioned.utils.string import UPath
 from kedro_partitioned.utils.typing import (T)
 
+
 def _get_from_argv(arg: str, type: Type[T], default: T) -> T:
     parser = argparse.ArgumentParser()
     normalized_flag = arg.replace('-', '_')
