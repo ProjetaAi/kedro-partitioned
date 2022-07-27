@@ -249,7 +249,7 @@ class _SlicerNode(_CustomizedFuncNode):
 
         >>> n = _SlicerNode(2, 'a', 'b', 'x')
         >>> n
-        Node(nonefy, ['a'], 'b-slicer', 'x-slicer')
+        Node(nonefy, ['a'], 'b-slicer', 'x')
 
         >>> dictionary = {'a': {'subpath/a.txt': lambda: 3,
         ...                     'subpath/b.txt': lambda: 4}}
@@ -1116,14 +1116,14 @@ def multipipeline(
         ...     ['a'],
         ...     'x',
         ...     n_slices=2)) # doctest: +NORMALIZE_WHITESPACE
-        [Node(min, ['c-slicer', 'a', 'b'], ['c-slice-0'], 'abc-slice-0'), \
-         Node(min, ['c-slicer', 'a', 'b'], ['c-slice-1'], 'abc-slice-1'), \
-         Node(max, ['c-slicer', 'c-slice-0', 'd'], ['e-slice-0'], \
-            'def-slice-0'), \
-         Node(max, ['c-slicer', 'c-slice-1', 'd'], ['e-slice-1'], \
-            'def-slice-1'), \
-         Node(nonefy, ['a'], 'c-slicer', 'x-slicer'), \
-         Node(nonefy, ['e-slice-0', 'e-slice-1'], ['c', 'e'], \
+        [Node(min, ['c-slicer', 'a', 'b'], ['c-slice-0'], 'abc-slice-0'),
+         Node(min, ['c-slicer', 'a', 'b'], ['c-slice-1'], 'abc-slice-1'),
+         Node(max, ['c-slicer', 'c-slice-0', 'd'], ['e-slice-0'],\
+            'def-slice-0'),
+         Node(max, ['c-slicer', 'c-slice-1', 'd'], ['e-slice-1'],\
+            'def-slice-1'),
+         Node(nonefy, ['a'], 'c-slicer', 'x'),
+         Node(nonefy, ['e-slice-0', 'e-slice-1'], ['c', 'e'],\
             'x-synchronization')]
 
     Warning:
@@ -1277,9 +1277,9 @@ def multinode(
         ...     other_inputs=['d'],
         ...     n_slices=2,
         ...     name='x',)) # doctest: +NORMALIZE_WHITESPACE
-        [Node(max, ['b-slicer', 'a', 'd'], ['b-slice-0'], 'x-slice-0'), \
-         Node(max, ['b-slicer', 'a', 'd'], ['b-slice-1'], 'x-slice-1'), \
-         Node(nonefy, ['a'], 'b-slicer', 'x-slicer'), \
+        [Node(nonefy, ['a'], 'b-slicer', 'x'),
+         Node(max, ['b-slicer', 'a', 'd'], ['b-slice-0'], 'x-slice-0'),
+         Node(max, ['b-slicer', 'a', 'd'], ['b-slice-1'], 'x-slice-1'),
          Node(nonefy, ['b-slice-0', 'b-slice-1'], ['b'], 'x-synchronization')]
 
         Accepts multiple inputs (works like zip(*partitioneds)):
@@ -1291,9 +1291,9 @@ def multinode(
         ...     n_slices=2,
         ...     other_inputs=['d'],
         ...     name='x')) # doctest: +NORMALIZE_WHITESPACE
-        [Node(max, ['c-slicer', 'a', 'b', 'd'], ['c-slice-0'], 'x-slice-0'), \
-         Node(max, ['c-slicer', 'a', 'b', 'd'], ['c-slice-1'], 'x-slice-1'), \
-         Node(nonefy, ['a', 'b'], 'c-slicer', 'x-slicer'), \
+        [Node(nonefy, ['a', 'b'], 'c-slicer', 'x'),
+         Node(max, ['c-slicer', 'a', 'b', 'd'], ['c-slice-0'], 'x-slice-0'),
+         Node(max, ['c-slicer', 'a', 'b', 'd'], ['c-slice-1'], 'x-slice-1'),
          Node(nonefy, ['c-slice-0', 'c-slice-1'], ['c'], 'x-synchronization')]
 
         Accepts multiple outputs:
@@ -1305,12 +1305,12 @@ def multinode(
         ...     n_slices=2,
         ...     other_inputs=['d'],
         ...     name='x')) # doctest: +NORMALIZE_WHITESPACE
-        [Node(max, ['b-slicer', 'a', 'd'], ['b-slice-0', 'c-slice-0'], \
-            'x-slice-0'), \
-         Node(max, ['b-slicer', 'a', 'd'], ['b-slice-1', 'c-slice-1'], \
-            'x-slice-1'), \
-         Node(nonefy, ['a'], 'b-slicer', 'x-slicer'), \
-         Node(nonefy, ['b-slice-0', 'c-slice-0', 'b-slice-1', 'c-slice-1'], \
+        [Node(nonefy, ['a'], 'b-slicer', 'x'),
+         Node(max, ['b-slicer', 'a', 'd'], ['b-slice-0', 'c-slice-0'],\
+            'x-slice-0'),
+         Node(max, ['b-slicer', 'a', 'd'], ['b-slice-1', 'c-slice-1'],\
+            'x-slice-1'),
+         Node(nonefy, ['b-slice-0', 'c-slice-0', 'b-slice-1', 'c-slice-1'],\
             ['b', 'c'], 'x-synchronization')]
 
         >>> mn = multinode(
@@ -1322,12 +1322,10 @@ def multinode(
         ...     tags=['test_tag'],
         ...     namespace='namespace',)
         >>> sortnodes(mn) # doctest: +NORMALIZE_WHITESPACE
-        [Node(max, ['b-slicer', 'a'], ['b-slice-0', 'c-slice-0'],
-            'x-slice-0'), \
-         Node(max, ['b-slicer', 'a'], ['b-slice-1', 'c-slice-1'], \
-            'x-slice-1'), \
-         Node(nonefy, ['a'], 'b-slicer', 'x-slicer'), \
-         Node(nonefy, ['b-slice-0', 'c-slice-0', 'b-slice-1', 'c-slice-1'], \
+        [Node(nonefy, ['a'], 'b-slicer', 'x'),
+         Node(max, ['b-slicer', 'a'], ['b-slice-0', 'c-slice-0'], 'x-slice-0'),
+         Node(max, ['b-slicer', 'a'], ['b-slice-1', 'c-slice-1'], 'x-slice-1'),
+         Node(nonefy, ['b-slice-0', 'c-slice-0', 'b-slice-1', 'c-slice-1'],\
             ['b', 'c'], 'x-synchronization')]
 
         >>> all([n.tags == {'x', 'test_tag'} for n in mn.nodes])
@@ -1393,12 +1391,12 @@ def multinode(
         ...     namespace='namespace',
         ...     configurator='params:config')
         >>> sortnodes(mn) # doctest: +NORMALIZE_WHITESPACE
-        [Node(max, ['b-slicer', 'a', 'params:config'], \
-            ['b-slice-0', 'c-slice-0'], 'x-slice-0'), \
-         Node(max, ['b-slicer', 'a', 'params:config'], \
-            ['b-slice-1', 'c-slice-1'], 'x-slice-1'), \
-         Node(nonefy, ['a', 'params:config'], 'b-slicer', 'x-slicer'), \
-         Node(nonefy, ['b-slice-0', 'c-slice-0', 'b-slice-1', 'c-slice-1'], \
+        [Node(nonefy, ['a', 'params:config'], 'b-slicer', 'x'),
+         Node(max, ['b-slicer', 'a', 'params:config'],\
+            ['b-slice-0', 'c-slice-0'], 'x-slice-0'),
+         Node(max, ['b-slicer', 'a', 'params:config'],\
+            ['b-slice-1', 'c-slice-1'], 'x-slice-1'),
+         Node(nonefy, ['b-slice-0', 'c-slice-0', 'b-slice-1', 'c-slice-1'],\
             ['b', 'c'], 'x-synchronization')]
 
     Warning:
