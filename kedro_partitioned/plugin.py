@@ -5,10 +5,23 @@ from kedro.pipeline import Pipeline
 from kedro.io import DataCatalog
 from kedro.framework.hooks import hook_impl
 from kedro.extras.datasets.json import JSONDataSet
-from kedro.io import PartitionedDataSet
+import kedro.io.partitioned_dataset
 
 from kedro_partitioned.pipeline.multinode import _SlicerNode, _MultiNode
 from kedro_partitioned.utils.string import UPath
+from kedro.io.partitioned_dataset import PartitionedDataSet
+from kedro_partitioned.io.partitioned_dataset import (
+    PartitionedDataSet as FixedPartitionedDataSet
+)
+
+
+class PartitionedDataSetPartialSubpathFixer:
+    """Overrides Kedro partitioned in order to fix the subpath issue."""
+
+    def __init__(self):
+        """Initialize the class."""
+        kedro.io.partitioned_dataset.PartitionedDataSet =\
+            FixedPartitionedDataSet
 
 
 class MultiNodeEnabler:
@@ -16,7 +29,7 @@ class MultiNodeEnabler:
 
     >>> from kedro.io import DataCatalog, PartitionedDataSet
     >>> from kedro.pipeline import Pipeline, node
-    >>> from .multinode import multipipeline
+    >>> from kedro_partitioned.pipeline import multipipeline
     >>> pipe = multipipeline(Pipeline([
     ...     node(func=lambda x: x, name='node', inputs='a', outputs='b'),]),
     ...     'a', 'pipe', n_slices=2)
@@ -103,4 +116,4 @@ class MultiNodeEnabler:
                 )
 
 
-hooks = MultiNodeEnabler()
+hooks = (MultiNodeEnabler(), PartitionedDataSetPartialSubpathFixer())

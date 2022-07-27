@@ -1073,7 +1073,7 @@ def multipipeline(
     for a multinode layer to finish its work.
 
     See also:
-        :py:func:`kedro_multinode.multinode.multinode`
+        :py:func:`kedro_partitioned.multinode.multinode`
 
     Args:
         pipe (Pipeline): Pipeline to be parallelized by multiple nodes.
