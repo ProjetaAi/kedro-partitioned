@@ -24,15 +24,13 @@ Step Parallelism
 ******************
 
 .. autosummary::
-   environment.BuildEnvironment
-   kedro_partitioned.pipeline.multinode
-   kedro_partitioned.pipeline.multipipeline
+   kedro_partitioned.pipeline.multinode.multinode
+   kedro_partitioned.pipeline.multinode.multipipeline
 
 DataSets
 ******************
 
 .. autosummary::
-   environment.BuildEnvironment
    kedro_partitioned.extras.datasets.concatenated_dataset.ConcatenatedDataSet
    kedro_partitioned.extras.datasets.concatenated_dataset.PandasConcatenatedDataSet
 
@@ -40,7 +38,6 @@ Decorators
 ******************
 
 .. autosummary::
-   environment.BuildEnvironment
    kedro_partitioned.pipeline.decorators.concat_partitions
    kedro_partitioned.pipeline.decorators.split_into_partitions
    kedro_partitioned.pipeline.decorators.list_output
@@ -54,7 +51,6 @@ These functions are designed to be used with the decorators above, but can be
 used in other scenarios if needed.
 
 .. autosummary::
-   environment.BuildEnvironment
    kedro_partitioned.pipeline.decorators.helper_factory.date_range_filter
    kedro_partitioned.pipeline.decorators.helper_factory.regex_filter
    kedro_partitioned.pipeline.decorators.helper_factory.not_filter
@@ -65,7 +61,6 @@ There are more relevant utilitary functions, but only the most important ones
 are listed below:
 
 .. autosummary::
-   environment.BuildEnvironment
    kedro_partitioned.utils.string.UPath
 
 API Reference
