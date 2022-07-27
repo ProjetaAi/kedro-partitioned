@@ -1,0 +1,1 @@
+"""Kedro-partitioned package."""
