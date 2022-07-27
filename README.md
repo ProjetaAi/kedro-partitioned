@@ -1,28 +1,38 @@
-# kedro-multinode
+# Kedro Partitioned
+
+![Build Status](https://dev.azure.com/ipiranga-dev/prj-ciencia-de-dados/_apis/build/status/ProjetaAi.kedro-multinode?branchName=main)
+![Build Status](https://img.shields.io/azure-devops/coverage/ipiranga-dev/prj-ciencia-de-dados/101/master)
 
 ## Introduction
 
-Kedro plugin that allows creation of partitioned nodes (nodes that process each partition in parallel)
+Kedro Plugin focused on extending and helping the user to process partitioned data.
+
+## Usage:
+
+Read our [docs](https://projetaai.github.io/kedro-partitioned/)
 
 ## Getting Started
 
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
+Execute this command in your terminal:
 
-1. Installation process
-2. Software dependencies
-3. Latest releases
-4. API references
-
-## Build and Test
-
-TODO: Describe and show how to build your code and run the tests.
+```bash
+pip install kedro-partitioned
+```
 
 ## Contribute
 
-TODO: Explain how other users and developers can contribute to make your code better.
+If you want to contribute with this package, do the following steps:
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
+1. Fork the repo
+2. Clone it in your machine
+3. Install with `pip install .[dev]`
+4. Run `pre-commit install` in the project root
+5. Make your changes
+6. Create a pr for us <3
 
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+> Note: Remember to create unit tests and to run pytest and flake8 before creating a pr
+
+## Credits
+
+* Gabriel Daiha Alves [@gabrieldaiha](https://github.com/nickolasrm)
+* Nickolas da Rocha Machado [@nickolasrm](https://github.com/gabrieldaiha)

@@ -14,15 +14,15 @@ from typing_extensions import Literal, NotRequired
 
 from kedro.pipeline.node import Node
 from kedro.pipeline import node
-from kedro_multinode.utils.constants import MAX_NODES, MAX_WORKERS
-from kedro_multinode.utils.other import (
+from kedro_partitioned.utils.constants import MAX_NODES, MAX_WORKERS
+from kedro_partitioned.utils.other import (
     nonefy,
     truthify,
 )
-from kedro_multinode.utils.string import (
+from kedro_partitioned.utils.string import (
     get_filepath_without_extension,
 )
-from kedro_multinode.utils.iterable import (
+from kedro_partitioned.utils.iterable import (
     firstorlist,
     partition,
     tolist,
@@ -30,7 +30,7 @@ from kedro_multinode.utils.iterable import (
     optionaltolist,
 )
 from kedro.pipeline import Pipeline
-from kedro_multinode.utils.typing import T, Args, IsFunction
+from kedro_partitioned.utils.typing import T, Args, IsFunction
 
 _Partitioned = Dict[str, Callable[[], Any]]
 
@@ -249,7 +249,7 @@ class _SlicerNode(_CustomizedFuncNode):
 
         >>> n = _SlicerNode(2, 'a', 'b', 'x')
         >>> n
-        Node(nonefy, ['a'], 'b-slicer', 'x-slicer')
+        Node(nonefy, ['a'], 'b-slicer', 'x')
 
         >>> dictionary = {'a': {'subpath/a.txt': lambda: 3,
         ...                     'subpath/b.txt': lambda: 4}}
@@ -1064,7 +1064,16 @@ def multipipeline(
     max_simultaneous_steps: int = None,
     filter: IsFunction[str] = truthify,
 ) -> Pipeline:
-    """Creates multiple nodes given one function.
+    """Creates multiple pipelines to process partitioned data.
+
+    Multipipelines are the same as multinode, but instead of adding a
+    synhcronization node for each step, it creates small pipelines that work
+    like a multinode, with a synchronization only at the end of the pipeline.
+    This enables to process data in parallel, but without the need of waiting
+    for a multinode layer to finish its work.
+
+    See also:
+        :py:func:`kedro_partitioned.multinode.multinode`
 
     Args:
         pipe (Pipeline): Pipeline to be parallelized by multiple nodes.
@@ -1085,21 +1094,7 @@ def multipipeline(
         n_slices (int): Number of multinodes to build.
             Defaults to MAX_WORKERS + MAX_NODES
         max_simultaneous_steps (int): Maximum number of slices created for
-            each branch.
-            e.g.
-                max_simultaneous_steps = None
-                n_slices = 2
-                func = pipe([A->B, B->C, [C, D]->E])
-                                   B->D
-                output: pipe(A->B0, B0->C0, [C0, D0] -> E0)
-                             A->B1  B1->C1  [C1, D1] -> D1
-                                    B0->D0
-                                    B1->D1
-
-                max_simultaneous_steps = 2
-                output: pipe(A->B0, B0->C0, [C0, D0] -> E0)
-                                    B0->D0
-            Defaults to None.
+            each branch. Defaults to None.
         filter (IsFunction[str]): A function applied to each partition of
             the partitioned inputs. If the function returns False, the
             parttition won't be used.
@@ -1116,15 +1111,35 @@ def multipipeline(
         ...     ['a'],
         ...     'x',
         ...     n_slices=2)) # doctest: +NORMALIZE_WHITESPACE
-        [Node(min, ['c-slicer', 'a', 'b'], ['c-slice-0'], 'abc-slice-0'), \
-         Node(min, ['c-slicer', 'a', 'b'], ['c-slice-1'], 'abc-slice-1'), \
-         Node(max, ['c-slicer', 'c-slice-0', 'd'], ['e-slice-0'], \
-            'def-slice-0'), \
-         Node(max, ['c-slicer', 'c-slice-1', 'd'], ['e-slice-1'], \
-            'def-slice-1'), \
-         Node(nonefy, ['a'], 'c-slicer', 'x-slicer'), \
-         Node(nonefy, ['e-slice-0', 'e-slice-1'], ['c', 'e'], \
+        [Node(min, ['c-slicer', 'a', 'b'], ['c-slice-0'], 'abc-slice-0'),
+         Node(min, ['c-slicer', 'a', 'b'], ['c-slice-1'], 'abc-slice-1'),
+         Node(max, ['c-slicer', 'c-slice-0', 'd'], ['e-slice-0'],\
+            'def-slice-0'),
+         Node(max, ['c-slicer', 'c-slice-1', 'd'], ['e-slice-1'],\
+            'def-slice-1'),
+         Node(nonefy, ['a'], 'c-slicer', 'x'),
+         Node(nonefy, ['e-slice-0', 'e-slice-1'], ['c', 'e'],\
             'x-synchronization')]
+
+    Max Simultaneous Steps:
+
+        This configuration defines the maximum number of steps per branch.
+        Check the example bellow for more details:
+
+        .. code-block:: python
+
+            max_simultaneous_steps = None
+            n_slices = 2
+            func = pipe([A->B, B->C, [C, D]->E])
+                            B->D
+            output = pipe(A->B0, B0->C0, [C0, D0] -> E0)
+                            A->B1  B1->C1  [C1, D1] -> D1
+                                    B0->D0
+                                    B1->D1
+
+            max_simultaneous_steps = 2
+            output: pipe(A->B0, B0->C0, [C0, D0] -> E0)
+                                B0->D0
 
     Warning:
         every function must me declared considering partitioned inputs are
@@ -1237,7 +1252,54 @@ def multinode(
     n_slices: int = MAX_NODES * MAX_WORKERS,
     filter: IsFunction[str] = truthify,
 ) -> Pipeline:
-    """Creates multiple nodes given one function.
+    """Creates multiple nodes to process partitioned data.
+
+    Multinodes are a way to implement step level parallelism. It is useful
+    for processing independent data in parallel, managed by pipeline runners.
+    For example, in Kedro, running the pipeline with ParallelRunner would
+    enable the steps generated by multinode to be run using multiple cpus. At
+    the same time, if you run this pipeline in a distributed context, you
+    could rely on a "DistributedRunner" or in another pipeline manager like
+    AzureML or Kubeflow, without having to change the code.
+
+    Multinodes work like the following flowchart:
+        .. code-block:: text
+
+            +--------------+
+            | Configurator |
+            | parameter    |-+
+            +--------------+ |
+                        |    |
+                        v    |
+            +-------------+  +->+------------+     +--------------------+
+            | Slicer Node |--+->| Slice-0    |--+->| Synchronization    |
+            | my          |  +->| my-slice-0 |  |  | my-synchronization |
+            +-------------+  |  +------------+  |  +--------------------+
+                        ^    |          ...     |       |
+                        |    +->+------------+  |       v
+            +-------------+  +->| Slice-1    |--|   +-------------+
+            | Partitioned |--+->| my-slice-1 |  |   | Partitioned |
+            | input-ds    |  |  +------------+  |   | output-ds   |
+            +-------------+  +->+------------+  |   +-------------+
+            Start            +->| Slice-n    |--+   End
+                             +->| my-slice-n |
+                                +------------+
+
+    Nodes specification:
+        Slicer Node:
+            name: multinode name
+            inputs: partitioned inputs and configurator cached flags
+            outputs: json with a list of partitions for each slice
+
+        Slice:
+            name: multinode name + slice id
+            inputs: partitioned inputs, slicer json, configurator data
+            outputs: subset of the partitioned outputs
+
+        Synchronization:
+            name: multinode name + synchronization
+            inputs: subset of the partitioned outputs
+            outputs: partitioned outputs without data (synchronization only)
 
     Args:
         func (Callable[[Args[Any]], Union[str, List[Any]]]): Function executed
@@ -1277,9 +1339,9 @@ def multinode(
         ...     other_inputs=['d'],
         ...     n_slices=2,
         ...     name='x',)) # doctest: +NORMALIZE_WHITESPACE
-        [Node(max, ['b-slicer', 'a', 'd'], ['b-slice-0'], 'x-slice-0'), \
-         Node(max, ['b-slicer', 'a', 'd'], ['b-slice-1'], 'x-slice-1'), \
-         Node(nonefy, ['a'], 'b-slicer', 'x-slicer'), \
+        [Node(nonefy, ['a'], 'b-slicer', 'x'),
+         Node(max, ['b-slicer', 'a', 'd'], ['b-slice-0'], 'x-slice-0'),
+         Node(max, ['b-slicer', 'a', 'd'], ['b-slice-1'], 'x-slice-1'),
          Node(nonefy, ['b-slice-0', 'b-slice-1'], ['b'], 'x-synchronization')]
 
         Accepts multiple inputs (works like zip(*partitioneds)):
@@ -1291,9 +1353,9 @@ def multinode(
         ...     n_slices=2,
         ...     other_inputs=['d'],
         ...     name='x')) # doctest: +NORMALIZE_WHITESPACE
-        [Node(max, ['c-slicer', 'a', 'b', 'd'], ['c-slice-0'], 'x-slice-0'), \
-         Node(max, ['c-slicer', 'a', 'b', 'd'], ['c-slice-1'], 'x-slice-1'), \
-         Node(nonefy, ['a', 'b'], 'c-slicer', 'x-slicer'), \
+        [Node(nonefy, ['a', 'b'], 'c-slicer', 'x'),
+         Node(max, ['c-slicer', 'a', 'b', 'd'], ['c-slice-0'], 'x-slice-0'),
+         Node(max, ['c-slicer', 'a', 'b', 'd'], ['c-slice-1'], 'x-slice-1'),
          Node(nonefy, ['c-slice-0', 'c-slice-1'], ['c'], 'x-synchronization')]
 
         Accepts multiple outputs:
@@ -1305,13 +1367,15 @@ def multinode(
         ...     n_slices=2,
         ...     other_inputs=['d'],
         ...     name='x')) # doctest: +NORMALIZE_WHITESPACE
-        [Node(max, ['b-slicer', 'a', 'd'], ['b-slice-0', 'c-slice-0'], \
-            'x-slice-0'), \
-         Node(max, ['b-slicer', 'a', 'd'], ['b-slice-1', 'c-slice-1'], \
-            'x-slice-1'), \
-         Node(nonefy, ['a'], 'b-slicer', 'x-slicer'), \
-         Node(nonefy, ['b-slice-0', 'c-slice-0', 'b-slice-1', 'c-slice-1'], \
+        [Node(nonefy, ['a'], 'b-slicer', 'x'),
+         Node(max, ['b-slicer', 'a', 'd'], ['b-slice-0', 'c-slice-0'],\
+            'x-slice-0'),
+         Node(max, ['b-slicer', 'a', 'd'], ['b-slice-1', 'c-slice-1'],\
+            'x-slice-1'),
+         Node(nonefy, ['b-slice-0', 'c-slice-0', 'b-slice-1', 'c-slice-1'],\
             ['b', 'c'], 'x-synchronization')]
+
+        Tags and namespaces are allowed:
 
         >>> mn = multinode(
         ...     func=max,
@@ -1322,21 +1386,17 @@ def multinode(
         ...     tags=['test_tag'],
         ...     namespace='namespace',)
         >>> sortnodes(mn) # doctest: +NORMALIZE_WHITESPACE
-        [Node(max, ['b-slicer', 'a'], ['b-slice-0', 'c-slice-0'],
-            'x-slice-0'), \
-         Node(max, ['b-slicer', 'a'], ['b-slice-1', 'c-slice-1'], \
-            'x-slice-1'), \
-         Node(nonefy, ['a'], 'b-slicer', 'x-slicer'), \
-         Node(nonefy, ['b-slice-0', 'c-slice-0', 'b-slice-1', 'c-slice-1'], \
+        [Node(nonefy, ['a'], 'b-slicer', 'x'),
+         Node(max, ['b-slicer', 'a'], ['b-slice-0', 'c-slice-0'], 'x-slice-0'),
+         Node(max, ['b-slicer', 'a'], ['b-slice-1', 'c-slice-1'], 'x-slice-1'),
+         Node(nonefy, ['b-slice-0', 'c-slice-0', 'b-slice-1', 'c-slice-1'],\
             ['b', 'c'], 'x-synchronization')]
-
         >>> all([n.tags == {'x', 'test_tag'} for n in mn.nodes])
         True
-
         >>> all([n.namespace == 'namespace' for n in mn.nodes])
         True
 
-        Configurators
+    Configurators
 
         A configurator is a dict parameter declared in parameters yamls that
         contains two sections: 'template' and 'configurators'. The 'template'
@@ -1346,42 +1406,44 @@ def multinode(
         list specifying replacements for the pattern, and a data entry that
         is going to be inputted to the multinode.
 
-        See `_Configurators` for more details.
+        .. code-block:: yaml
 
-        ```yml
-        config:
-          template:
-            pattern: 'a-part-{part}'
-            any: # this section is optional, it overwrites '.*' as any regex
-              part: '(a|b|c|d)'
-          configurators:
-            -
-              target:
+            config:
+                template:
+                pattern: 'a-part-{part}'
+            #     any: # optional, it overwrites '.*' as an any regex
+            #       part: '(a|b|c|d)'
+            #   hierarchy: # optional, specifies priority of each target
+            #     - part
+                configurators:
                 -
-                  - a
-                  - b
-              data:
-                setting_a: 'foo'
-                setting_b: 2
-            -
-              target:
-                - c
-                data:
-                  setting_a: 'zzz'
-                  setting_b: 4
-            -
-              target:
-                - '*'
-              data:
-                setting_a: 'bar'
-                setting_b: 1
-        ```
+                    target: # replaces pattern {} from left to right order
+                    - a
+                    - b
+                    cached: true # will not run
+                    data:
+                    setting_a: 'foo'
+                    setting_b: 2
+                -
+                    target:
+                    - c
+                        data:
+                        setting_a: 'zzz'
+                        setting_b: 4
+                -
+                    target:
+                    - '*'
+                    data:
+                    setting_a: 'bar'
+                    setting_b: 1
 
         In the example above, target ['a', 'b'] will be the configurator of the
         partition 'a-part-a' and 'a-part-b', the configurator with target 'c'
         will be the configurator of the partition 'a-part-c', and the
         configurator with target '*' will be the configurator of all other
         partitions.
+
+    Example:
 
         >>> mn = multinode(
         ...     func=max,
@@ -1393,13 +1455,17 @@ def multinode(
         ...     namespace='namespace',
         ...     configurator='params:config')
         >>> sortnodes(mn) # doctest: +NORMALIZE_WHITESPACE
-        [Node(max, ['b-slicer', 'a', 'params:config'], \
-            ['b-slice-0', 'c-slice-0'], 'x-slice-0'), \
-         Node(max, ['b-slicer', 'a', 'params:config'], \
-            ['b-slice-1', 'c-slice-1'], 'x-slice-1'), \
-         Node(nonefy, ['a', 'params:config'], 'b-slicer', 'x-slicer'), \
-         Node(nonefy, ['b-slice-0', 'c-slice-0', 'b-slice-1', 'c-slice-1'], \
+        [Node(nonefy, ['a', 'params:config'], 'b-slicer', 'x'),
+         Node(max, ['b-slicer', 'a', 'params:config'],\
+            ['b-slice-0', 'c-slice-0'], 'x-slice-0'),
+         Node(max, ['b-slicer', 'a', 'params:config'],\
+            ['b-slice-1', 'c-slice-1'], 'x-slice-1'),
+         Node(nonefy, ['b-slice-0', 'c-slice-0', 'b-slice-1', 'c-slice-1'],\
             ['b', 'c'], 'x-synchronization')]
+
+    Note:
+        the multinode name is also added as a tag into all nodes in order
+        to allow running the multinode with `kedro run --tag`.
 
     Warning:
         every function must me declared considering partitioned inputs are

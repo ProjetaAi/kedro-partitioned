@@ -1,0 +1,19 @@
+button.copybtn {
+   background: var(--bg);
+   opacity: 0.5;
+}
+
+.highlight button.copybtn:hover {
+    opacity: 1;
+    background: var(--bg);
+}
+
+.highlight button.copybtn:active {
+    opacity: 1;
+    background: var(--bg);
+}
+
+.o-tooltip--left:after {
+    background: var(--bg);
+    color: white;
+}
