@@ -24,8 +24,8 @@ Step Parallelism
 ******************
 
 .. autosummary::
-   kedro_partitioned.pipeline.multinode
-   kedro_partitioned.pipeline.multipipeline
+   kedro_partitioned.pipeline.multinode.multinode
+   kedro_partitioned.pipeline.multinode.multipipeline
 
 DataSets
 ******************
