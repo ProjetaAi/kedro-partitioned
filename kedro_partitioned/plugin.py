@@ -116,4 +116,5 @@ class MultiNodeEnabler:
                 )
 
 
-hooks = (MultiNodeEnabler(), PartitionedDataSetPartialSubpathFixer())
+multinode_enabler = MultiNodeEnabler()
+partitioned_fixer = PartitionedDataSetPartialSubpathFixer()
