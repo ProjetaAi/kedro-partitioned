@@ -4,7 +4,7 @@ requires = ["setuptools>=45.0", "wheel"]
 
 [tool.pytest.ini_options]
 addopts = """
--x tests kedro-multinode \
+-x tests kedro_multinode \
 --disable-warnings \
 --capture=tee-sys \
 --doctest-modules \
@@ -12,7 +12,7 @@ addopts = """
 --cov-report xml \
 --cov-report html \
 --junitxml=junit/test-results.xml \
---cov kedro-multinode -ra"""
+--cov kedro_multinode -ra"""
 
 [tool.coverage.report]
 exclude_lines = ["pragma: no cover", "raise NotImplementedError"]
@@ -27,5 +27,4 @@ coalesce_brackets = true
 dedent_closing_brackets = true
 split_arguments_when_comma_terminated = true
 allow_split_before_dict_value = false
-split_before_binary_operator = true
 split_before_arithmetic_operator = true
