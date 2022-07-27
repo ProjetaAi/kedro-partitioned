@@ -4,7 +4,7 @@ import inspect
 import re
 from typing import Any, Callable, Dict, Union
 
-from kedro_multinode.utils.typing import T
+from kedro_partitioned.utils.typing import T
 
 
 def get_varargs_as_kwargs_parser(f: Callable) -> Callable[..., Dict[str, Any]]:
