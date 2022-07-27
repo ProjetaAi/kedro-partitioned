@@ -1,8 +1,6 @@
 """Utils for string manipulation."""
-from string import Template as _Template
 from pathlib import Path, PosixPath, PurePath, PurePosixPath, WindowsPath
-import re
-from typing import Any, Dict, Union
+from typing import Any
 from upath import UPath as _UPath
 
 
@@ -99,62 +97,3 @@ def get_filepath_without_extension(filepath: str) -> str:
         return filepath.rsplit(ext, 1)[0]
     else:
         return filepath
-
-
-def to_snake_case(string: str) -> str:
-    """Converts a string to snake case.
-
-    Args:
-        string (str)
-
-    Returns:
-        str
-
-    Example:
-        >>> to_snake_case('CamelCase')
-        'camel_case'
-    """
-    return re.sub(r'(?<!^)(?=[A-Z])', '_', string).lower()
-
-
-def deepformat(x: Union[str, list, dict],
-               replacements: Dict[str, str]) -> Union[str, list, dict, tuple]:
-    """Replaces strings and nested strings recursively.
-
-    Args:
-        x (Union[str, list, dict])
-        replacements (Dict[str, str])
-
-    Returns:
-        Union[str, list, dict, tuple]
-
-    Example:
-        >>> deepformat(3, {'b': '3'})
-        3
-        >>> deepformat('a{b}c{b}', {'b': '3'})
-        'a3c3'
-        >>> deepformat(['a{b}c{b}'], {'b': '3'})
-        ['a3c3']
-        >>> deepformat(('a{b}c{b}',), {'b': '3'})
-        ('a3c3',)
-        >>> deepformat({'b': 'a{b}c{b}'}, {'b': '3'})
-        {'b': 'a3c3'}
-        >>> deepformat({'b': [{'b': ('a{b}c{b}', 3)}]}, {'b': '3'})
-        {'b': [{'b': ('a3c3', 3)}]}
-    """
-    if isinstance(x, str):
-        return x.format_map(replacements)
-    elif isinstance(x, list):
-        return [deepformat(i, replacements) for i in x]
-    elif isinstance(x, tuple):
-        return tuple((deepformat(i, replacements) for i in x))
-    elif isinstance(x, dict):
-        return {k: deepformat(v, replacements) for k, v in x.items()}
-    else:
-        return x
-
-
-class Template(_Template):
-    """Copies 'string.Template' but with '$$' as its delimiter."""
-
-    delimiter = "$$"

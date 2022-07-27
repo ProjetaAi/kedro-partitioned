@@ -1,9 +1,7 @@
 """Utils for iterable manipulation."""
-
-from functools import reduce
-from typing import Dict, Iterable, List, Tuple, Union
-
+from typing import Iterable, List, Tuple, Union
 from kedro_multinode.utils.typing import T, IsFunction
+
 
 def firstorlist(lst: List[T]) -> Union[T, List[T]]:
     """Return the first element if the list is a single element list.
@@ -24,27 +22,6 @@ def firstorlist(lst: List[T]) -> Union[T, List[T]]:
         return lst[0]
     else:
         return lst
-
-
-def listorempty(val: T) -> List[T]:
-    """Return a itself if a list is provided, otherwise, returns an empty list.
-
-    Args:
-        val (T)
-
-    Returns:
-        List[T]
-
-    Example:
-        >>> listorempty(3)
-        []
-        >>> listorempty([3])
-        [3]
-    """
-    if isinstance(val, list):
-        return val
-    else:
-        return []
 
 
 def tolist(val: T) -> List[T]:
@@ -135,20 +112,3 @@ def unique(arg: List[T]) -> List[T]:
         ['a', 'b', 'c']
     """
     return list(set(arg))
-
-
-def get_nested(dictionary: Dict[str, T], key: str) -> T:
-    """Return the value of a nested key in a dictionary.
-
-    Args:
-        dictionary (dict)
-        key (str)
-
-    Returns:
-        T
-
-    Example:
-        >>> get_nested({'a': {'b': {'c': 3}}}, 'a.b.c')
-        3
-    """
-    return reduce(lambda d, k: d[k], key.split("."), dictionary)
