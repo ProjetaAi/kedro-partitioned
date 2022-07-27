@@ -1,1 +1,1 @@
-"""Package tests."""
+"""Package containing tests."""
