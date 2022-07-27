@@ -1,4 +1,4 @@
-# kedro-partitioned
+# kedro-multinode
 
 ## Introduction
 

@@ -1,1 +1,0 @@
-"""Hooks tests."""
