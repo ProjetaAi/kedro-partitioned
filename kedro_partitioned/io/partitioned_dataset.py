@@ -24,6 +24,12 @@ class PartitionedDataSet(_PartitionedDataSet):
             'partition1.csv'
 
             >>> ds = PartitionedDataSet(
+            ...          path="http://abc.core/path/to",
+            ...          dataset="pandas.CSVDataSet",)
+            >>> ds._path_to_partition("path/to/partition1.csv")
+            'partition1.csv'
+
+            >>> ds = PartitionedDataSet(
             ...          path="data/path",
             ...          dataset="pandas.CSVDataSet",)
             >>> ds._path_to_partition("data/path/partition1.csv")

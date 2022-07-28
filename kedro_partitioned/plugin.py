@@ -6,6 +6,7 @@ from kedro.io import DataCatalog
 from kedro.framework.hooks import hook_impl
 from kedro.extras.datasets.json import JSONDataSet
 import kedro.io.partitioned_dataset
+import kedro.io
 
 from kedro_partitioned.pipeline.multinode import _SlicerNode, _MultiNode
 from kedro_partitioned.utils.string import UPath
@@ -22,6 +23,7 @@ class PartitionedDataSetPartialSubpathFixer:
         """Initialize the class."""
         kedro.io.partitioned_dataset.PartitionedDataSet =\
             FixedPartitionedDataSet
+        kedro.io.PartitionedDataSet = FixedPartitionedDataSet
 
 
 class MultiNodeEnabler:
