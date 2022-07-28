@@ -2,7 +2,7 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Kedro Multinode documentation build configuration file, created by
+# Kedro Partitioned documentation build configuration file, created by
 # sphinx-quickstart on Wed Jul 27 13:25:35 2022.
 #
 # This file is execfile()d with the current directory set to its
@@ -50,7 +50,7 @@ extensions = [
 html_static_path = ["_static"]
 html_css_files = ["style.css"]
 
-autoapi_dirs = ['../../kedro_partitioned']
+autoapi_dirs = ['../kedro_partitioned']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -65,7 +65,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'Kedro Multinode'
+project = 'Kedro Partitioned'
 copyright = '2022, Ipiranga'
 author = 'Nickolas da Rocha Machado, Gabriel Daiha Alves'
 
@@ -131,7 +131,7 @@ html_sidebars = {
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'KedroMultinodedoc'
+htmlhelp_basename = 'KedroPartitioneddoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -158,7 +158,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (
-        master_doc, 'KedroMultinode.tex', 'Kedro Multinode Documentation',
+        master_doc, 'KedroPartitioned.tex', 'Kedro Partitioned Documentation',
         'Ipiranga', 'manual'
     ),
 ]
@@ -168,7 +168,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [(
-    master_doc, 'kedromultinode', 'Kedro Multinode Documentation', [author], 1
+    master_doc, 'kedropartitioned', 'Kedro Partitioned Documentation', [author], 1
 )]
 
 # -- Options for Texinfo output -------------------------------------------
@@ -178,8 +178,8 @@ man_pages = [(
 #  dir menu entry, description, category)
 texinfo_documents = [
     (
-        master_doc, 'KedroMultinode', 'Kedro Multinode Documentation', author,
-        'KedroMultinode', 'One line description of project.', 'Miscellaneous'
+        master_doc, 'KedroPartitioned', 'Kedro Partitioned Documentation', author,
+        'KedroPartitioned', 'One line description of project.', 'Miscellaneous'
     ),
 ]
 
