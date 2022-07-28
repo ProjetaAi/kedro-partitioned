@@ -1409,33 +1409,43 @@ def multinode(
         .. code-block:: yaml
 
             config:
-                template:
+              template:
                 pattern: 'a-part-{part}'
-            #     any: # optional, it overwrites '.*' as an any regex
-            #       part: '(a|b|c|d)'
-            #   hierarchy: # optional, specifies priority of each target
-            #     - part
-                configurators:
+
+              #    optional, overwrites '.*' as the regex when a
+              # v  target is set to '*'
+              # any:
+              #  part: '(a|b|c|d)'
+
+              #    optional, specifies priority of each target if left
+              # v  to right order is not correct
+              # hierarchy:
+              #  - part
+
+              configurators:
                 -
-                    target: # replaces pattern {} from left to right order
-                    - a
-                    - b
-                    cached: true # will not run
-                    data:
-                    setting_a: 'foo'
-                    setting_b: 2
+                   target: # replaces pattern's {} from left to right order
+                     -
+                       - a
+                       - b
+                   # or a regex alternate syntax
+                   # - a|b
+                   cached: true # will not run
+                   data:
+                     setting_a: 'foo'
+                     setting_b: 2
                 -
-                    target:
-                    - c
-                        data:
-                        setting_a: 'zzz'
-                        setting_b: 4
+                   target:
+                     - c
+                   data:
+                     setting_a: 'zzz'
+                     setting_b: 4
                 -
-                    target:
-                    - '*'
-                    data:
-                    setting_a: 'bar'
-                    setting_b: 1
+                   target:
+                     - '*'
+                   data:
+                     setting_a: 'bar'
+                     setting_b: 1
 
         In the example above, target ['a', 'b'] will be the configurator of the
         partition 'a-part-a' and 'a-part-b', the configurator with target 'c'
