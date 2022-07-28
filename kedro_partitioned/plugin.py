@@ -42,10 +42,10 @@ class MultiNodeEnabler:
     >>> hook.before_pipeline_run({}, pipe, catalog)
 
     >>> pprint(catalog._data_sets)  # doctest: +ELLIPSIS
-    {'a': <kedro.io.partitioned_dataset.PartitionedDataSet ...>,
-     'b': <kedro.io.partitioned_dataset.PartitionedDataSet ...>,
-     'b-slice-0': <kedro.io.partitioned_dataset.PartitionedDataSet ...>,
-     'b-slice-1': <kedro.io.partitioned_dataset.PartitionedDataSet ...>,
+    {'a': <...PartitionedDataSet ...>,
+     'b': <...PartitionedDataSet ...>,
+     'b-slice-0': <...PartitionedDataSet ...>,
+     'b-slice-1': <...PartitionedDataSet ...>,
      'b-slicer': <kedro.extras.datasets.json.json_dataset.JSONDataSet ...>}
 
     >>> catalog._data_sets['b-slicer']._filepath
