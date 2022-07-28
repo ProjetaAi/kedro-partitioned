@@ -10,6 +10,9 @@ class UPath(_UPath):
     if a Windows was returned by UPath, it converts to a PurePosixPath
     because Kedro always use PosixPath by default.
 
+    Args:
+        *args (str): Paths to be parsed and joined (if multiple).
+
     Example:
         >>> UPath('C:/Users/user/Desktop/file.txt')
         PurePosixPath('C:/Users/user/Desktop/file.txt')
@@ -17,8 +20,8 @@ class UPath(_UPath):
         >>> UPath('abfs://azure.com/file.txt')
         AzurePath('abfs://azure.com/file.txt')
 
-        >>> UPath('a/b/c')
-        PurePosixPath('a/b/c')
+        >>> UPath('a/b/c', 'd')
+        PurePosixPath('a/b/c/d')
 
         >>> UPath('s3://test_bucket/file.txt')
         S3Path('s3://test_bucket/file.txt')

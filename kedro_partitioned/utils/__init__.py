@@ -1,2 +1,2 @@
 """Package for utilitary tools."""
-from kedro.utils import *
+from kedro_partitioned.utils.string import UPath
