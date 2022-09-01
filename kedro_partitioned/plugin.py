@@ -41,9 +41,9 @@ class MultiNodeEnabler:
 
     >>> credentials = {'account_name': 'test'}
     >>> catalog = DataCatalog(data_sets={
-    ...     'a': PathSafePartitionedDataSet('abfs://a/a', 'pandas.CSVDataSet',
+    ...     'a': PathSafePartitionedDataSet('http://a/a', 'pandas.CSVDataSet',
     ...         credentials=credentials),
-    ...     'b': PathSafePartitionedDataSet('abfs://a/b', 'pandas.CSVDataSet',
+    ...     'b': PathSafePartitionedDataSet('http://a/b', 'pandas.CSVDataSet',
     ...         credentials=credentials)})
     >>> hook.before_pipeline_run({}, pipe, catalog)
 
@@ -51,7 +51,7 @@ class MultiNodeEnabler:
     PurePosixPath('a/b/b-slicer.json')
 
     >>> catalog._data_sets['b-slicer']._protocol
-    'abfs'
+    'http'
     """
 
     @hook_impl
@@ -103,4 +103,4 @@ class MultiNodeEnabler:
                 )
 
 
-hooks = (MultiNodeEnabler(),)
+multinode_enabler = MultiNodeEnabler(),

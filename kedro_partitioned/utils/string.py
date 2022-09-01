@@ -17,8 +17,8 @@ class UPath(_UPath):
         >>> UPath('C:/Users/user/Desktop/file.txt')
         PurePosixPath('C:/Users/user/Desktop/file.txt')
 
-        >>> UPath('abfs://azure.com/file.txt')
-        AzurePath('abfs://azure.com/file.txt')
+        >>> UPath('http://azure.com/file.txt')
+        HTTPPath('http://azure.com/file.txt')
 
         >>> UPath('a/b/c', 'd')
         PurePosixPath('a/b/c/d')
