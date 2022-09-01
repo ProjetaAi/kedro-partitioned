@@ -168,7 +168,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [(
-    master_doc, 'kedropartitioned', 'Kedro Partitioned Documentation', [author], 1
+    master_doc, 'kedropartitioned', 'Kedro Partitioned Documentation',
+    [author], 1
 )]
 
 # -- Options for Texinfo output -------------------------------------------
@@ -178,8 +179,9 @@ man_pages = [(
 #  dir menu entry, description, category)
 texinfo_documents = [
     (
-        master_doc, 'KedroPartitioned', 'Kedro Partitioned Documentation', author,
-        'KedroPartitioned', 'One line description of project.', 'Miscellaneous'
+        master_doc, 'KedroPartitioned', 'Kedro Partitioned Documentation',
+        author, 'KedroPartitioned', 'One line description of project.',
+        'Miscellaneous'
     ),
 ]
 
