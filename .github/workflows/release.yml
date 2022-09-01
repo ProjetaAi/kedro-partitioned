@@ -4,7 +4,7 @@ on:
     branches:
     - release
 jobs:
-  release:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-python@v2
@@ -17,3 +17,21 @@ jobs:
         run: python -m build --wheel
       - name: Uploading to pypy
         run: twine upload ./dist/* --non-interactive --username nickolasrm --password "${{ secrets.PYPI_PASSWORD }}"
+  docs:
+    runs-on: ubuntu-latest
+    needs:
+      - publish
+    steps:
+    - uses: actions/setup-python@v2
+    - uses: actions/checkout@master
+      with:
+        fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+    - name: Install docs dependencies
+      run: pip install .[docs]
+    - name: Build and Commit
+      uses: sphinx-notes/pages@v2
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-pages
