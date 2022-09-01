@@ -4,8 +4,19 @@ import posixpath
 from kedro.io import PartitionedDataSet as _PartitionedDataSet
 
 
-class PartitionedDataSet(_PartitionedDataSet):
-    """A DataSet that reads and writes data in multiple files."""
+class PathSafePartitionedDataSet(_PartitionedDataSet):
+    """Same as the regular Partitioned DataSet, but handles absolute paths.
+
+    For example, if the ffspec package you are using returns the absolute path
+    from a glob, this dataset will be able to handle it.
+
+    Example:
+        >>> ds = PathSafePartitionedDataSet(
+        ...          path="http://abc.core/path/to",
+        ...          dataset="pandas.CSVDataSet",)
+        >>> ds._path_to_partition("http://abc.core/path/to/partition1.csv")
+        'partition1.csv'
+    """
 
     def _path_to_partition(self, path: str) -> str:
         """Takes only the relative subpath from the partitioned dataset path.
@@ -17,13 +28,13 @@ class PartitionedDataSet(_PartitionedDataSet):
             str: relative subpath from the partitioned dataset path
 
         Example:
-            >>> ds = PartitionedDataSet(
+            >>> ds = PathSafePartitionedDataSet(
             ...          path="http://abc.core/path/to",
             ...          dataset="pandas.CSVDataSet",)
             >>> ds._path_to_partition("http://abc.core/path/to/partition1.csv")
             'partition1.csv'
 
-            >>> ds = PartitionedDataSet(
+            >>> ds = PathSafePartitionedDataSet(
             ...          path="data/path",
             ...          dataset="pandas.CSVDataSet",)
             >>> ds._path_to_partition("data/path/partition1.csv")

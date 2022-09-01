@@ -5,45 +5,33 @@ from kedro.pipeline import Pipeline
 from kedro.io import DataCatalog
 from kedro.framework.hooks import hook_impl
 from kedro.extras.datasets.json import JSONDataSet
-import kedro.io.partitioned_dataset
 
 from kedro_partitioned.pipeline.multinode import _SlicerNode, _MultiNode
 from kedro_partitioned.utils.string import UPath
-from kedro.io.partitioned_dataset import PartitionedDataSet
-from kedro_partitioned.io.partitioned_dataset import (
-    PartitionedDataSet as FixedPartitionedDataSet
-)
-
-
-class PartitionedDataSetPartialSubpathFixer:
-    """Overrides Kedro partitioned in order to fix the subpath issue."""
-
-    def __init__(self):
-        """Initialize the class."""
-        kedro.io.partitioned_dataset.PartitionedDataSet =\
-            FixedPartitionedDataSet
+from kedro.io import PartitionedDataSet
 
 
 class MultiNodeEnabler:
     """Performs required changes in kedro in order to enable MultiNodes.
 
-    >>> from kedro.io import DataCatalog, PartitionedDataSet
+    >>> from kedro.io import DataCatalog
+    >>> from kedro_partitioned.io import PathSafePartitionedDataSet
     >>> from kedro.pipeline import Pipeline, node
     >>> from kedro_partitioned.pipeline import multipipeline
     >>> pipe = multipipeline(Pipeline([
     ...     node(func=lambda x: x, name='node', inputs='a', outputs='b'),]),
     ...     'a', 'pipe', n_slices=2)
     >>> catalog = DataCatalog(data_sets={
-    ...     'a': PartitionedDataSet('a', 'pandas.CSVDataSet'),
-    ...     'b': PartitionedDataSet('b', 'pandas.CSVDataSet')})
+    ...     'a': PathSafePartitionedDataSet('a', 'pandas.CSVDataSet'),
+    ...     'b': PathSafePartitionedDataSet('b', 'pandas.CSVDataSet')})
     >>> hook = MultiNodeEnabler()
     >>> hook.before_pipeline_run({}, pipe, catalog)
 
     >>> pprint(catalog._data_sets)  # doctest: +ELLIPSIS
-    {'a': <kedro.io.partitioned_dataset.PartitionedDataSet ...>,
-     'b': <kedro.io.partitioned_dataset.PartitionedDataSet ...>,
-     'b-slice-0': <kedro.io.partitioned_dataset.PartitionedDataSet ...>,
-     'b-slice-1': <kedro.io.partitioned_dataset.PartitionedDataSet ...>,
+    {'a': <...PathSafePartitionedDataSet ...>,
+     'b': <...PathSafePartitionedDataSet ...>,
+     'b-slice-0': <...PathSafePartitionedDataSet ...>,
+     'b-slice-1': <...PathSafePartitionedDataSet ...>,
      'b-slicer': <kedro.extras.datasets.json.json_dataset.JSONDataSet ...>}
 
     >>> catalog._data_sets['b-slicer']._filepath
@@ -54,9 +42,9 @@ class MultiNodeEnabler:
 
     >>> credentials = {'account_name': 'test'}
     >>> catalog = DataCatalog(data_sets={
-    ...     'a': PartitionedDataSet('abfs://a/a', 'pandas.CSVDataSet',
+    ...     'a': PathSafePartitionedDataSet('abfs://a/a', 'pandas.CSVDataSet',
     ...         credentials=credentials),
-    ...     'b': PartitionedDataSet('abfs://a/b', 'pandas.CSVDataSet',
+    ...     'b': PathSafePartitionedDataSet('abfs://a/b', 'pandas.CSVDataSet',
     ...         credentials=credentials)})
     >>> hook.before_pipeline_run({}, pipe, catalog)
 
@@ -116,4 +104,4 @@ class MultiNodeEnabler:
                 )
 
 
-hooks = (MultiNodeEnabler(), PartitionedDataSetPartialSubpathFixer())
+hooks = (MultiNodeEnabler(),)

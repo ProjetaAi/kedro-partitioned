@@ -4,14 +4,16 @@ import importlib
 from typing import Any, Callable, Dict, Generic, Iterable, Type, TypeVar, Union
 
 import pandas as pd
-from kedro_partitioned.io.partitioned_dataset import PartitionedDataSet
+from kedro_partitioned.io.path_safe_partitioned_dataset import (
+    PathSafePartitionedDataSet
+)
 from kedro_partitioned.utils.other import filter_or_regex, identity, truthify
 from kedro_partitioned.utils.typing import PandasDataSets
 
 T = TypeVar('T')
 
 
-class ConcatenatedDataSet(PartitionedDataSet, Generic[T]):
+class ConcatenatedDataSet(PathSafePartitionedDataSet, Generic[T]):
     """A partitioned DataSet that concatenates partitioned datasets.
 
     Args:

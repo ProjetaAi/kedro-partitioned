@@ -3,10 +3,12 @@
 from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
 from typing import Any, Dict, Tuple
-from kedro_partitioned.io.partitioned_dataset import PartitionedDataSet
+from kedro_partitioned.io.path_safe_partitioned_dataset import (
+    PathSafePartitionedDataSet
+)
 
 
-class ThreadedPartitionedDataSet(PartitionedDataSet):
+class ThreadedPartitionedDataSet(PathSafePartitionedDataSet):
     """Same implementation as the PartitionedDataSet, but using threads."""
 
     def _save_partition(self, partition: Tuple[str, Any]):
