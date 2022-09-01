@@ -1,0 +1,19 @@
+name: Release
+on:
+  push:
+    branches:
+    - release
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v2
+      - uses: actions/checkout@master
+        with:
+          fetch-depth: 0
+      - name: Installing dependencies
+        run: pip install build setuptools twine
+      - name: Generating wheel
+        run: python -m build --wheel
+      - name: Uploading to pypy
+        run: twine upload ./dist/* --non-interactive --username nickolasrm --password "${{ secrets.PYPI_PASSWORD }}"
