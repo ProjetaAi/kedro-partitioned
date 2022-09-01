@@ -5,7 +5,6 @@ from kedro.pipeline import Pipeline
 from kedro.io import DataCatalog
 from kedro.framework.hooks import hook_impl
 from kedro.extras.datasets.json import JSONDataSet
-
 from kedro_partitioned.pipeline.multinode import _SlicerNode, _MultiNode
 from kedro_partitioned.utils.string import UPath
 from kedro.io import PartitionedDataSet
