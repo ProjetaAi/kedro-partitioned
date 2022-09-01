@@ -1,7 +1,10 @@
 # Kedro Partitioned
 
-![Build Status](https://dev.azure.com/ipiranga-dev/prj-ciencia-de-dados/_apis/build/status/ProjetaAi.kedro-multinode?branchName=main)
-![Build Status](https://img.shields.io/azure-devops/coverage/ipiranga-dev/prj-ciencia-de-dados/101/master)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ProjetaAi/kedro-partitioned/Build)
+![Codecov](https://img.shields.io/codecov/c/gh/ProjetaAi/kedro-partitioned)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ProjetaAi/kedro-partitioned/Release?label=release)
+![PyPI](https://img.shields.io/pypi/v/kedro-partitioned)
+
 
 ## Introduction
 
