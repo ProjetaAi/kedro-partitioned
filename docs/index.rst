@@ -4,12 +4,18 @@
    contain the root `toctree` directive.
 
 Kedro Partitioned
------
+======================
 
-Introduction
-==================
-Kedro Plugin focused on extending and helping the user to process partitioned
-data.
+.. image:: https://img.shields.io/github/workflow/status/ProjetaAi/kedro-partitioned/Build
+   :alt: GitHub Workflow Status
+.. image:: https://img.shields.io/codecov/c/gh/projetaai/kedro-partitioned
+   :alt: Codecov
+.. image:: https://img.shields.io/github/workflow/status/ProjetaAi/kedro-partitioned/Release?label=release
+   :alt: GitHub Workflow Status
+.. image:: https://img.shields.io/pypi/v/kedro-partitioned
+   :alt: PyPI
+
+Kedro Plugin focused on extending and helping the user to process partitioned data.
 
 Installation
 ==================
