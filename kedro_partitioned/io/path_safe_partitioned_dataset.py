@@ -1,21 +1,28 @@
 """A DataSet that is partitioned into multiple DataSets."""
 from pathlib import PurePosixPath
 import posixpath
-from kedro.io import PartitionedDataSet as _PartitionedDataSet
+from kedro.io import PartitionedDataSet
 
 
-class PathSafePartitionedDataSet(_PartitionedDataSet):
-    """Same as the regular Partitioned DataSet, but handles absolute paths.
+class PathSafePartitionedDataSet(PartitionedDataSet):
+    """Partitioned DataSet, but handles mixed relative and absolute paths.
 
-    For example, if the ffspec package you are using returns the absolute path
-    from a glob, this dataset will be able to handle it.
+    For example, if the ffspec package you are using returns relative paths
+    from a glob, but the path you specified is absolute, this dataset will be
+    able to handle it.
 
     Example:
         >>> ds = PathSafePartitionedDataSet(
-        ...          path="http://abc.core/path/to",
+        ...          path="http://abc.core/path/to",  # absolute
         ...          dataset="pandas.CSVDataSet",)
-        >>> ds._path_to_partition("http://abc.core/path/to/partition1.csv")
+        >>> ds._path_to_partition("path/to/partition1.csv")  # relative
         'partition1.csv'
+
+        >>> ds = PartitionedDataSet(
+        ...          path="http://abc.core/path/to",  # absolute
+        ...          dataset="pandas.CSVDataSet",)
+        >>> ds._path_to_partition("path/to/partition1.csv")  # relative
+        'path/to/partition1.csv'
     """
 
     def _path_to_partition(self, path: str) -> str:
@@ -42,11 +49,11 @@ class PathSafePartitionedDataSet(_PartitionedDataSet):
 
         Note:
             this dataset differs from the original one because it treats non
-            absolute paths too. An example of non absolute path is the adlfs
-            outputs. it returns the path relative to the container, while to
-            declare the dataset, you'll have to pass the full uri to the
-            folder. This makes Kedro's partitioned dataset to not rsplit
-            its output correctly.
+            absolute paths too. An example of non package that returns relative
+            paths is the adlfs package. it returns the path relative to the
+            container, while to declare the dataset, you'll have to pass the
+            full uri to the folder. This makes Kedro's partitioned dataset to
+            not rsplit(partition, path) correctly.
         """
         subpath = super()._path_to_partition(path)
 

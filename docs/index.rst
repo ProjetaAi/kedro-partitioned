@@ -32,6 +32,11 @@ Contents
 Step Parallelism
 ******************
 
+Step Parallelism is a feature that allows the user to replicate a step into
+multiple nodes, each one processing a batch of data. This is useful when the
+step is computationally expensive and the user wants to speed up the execution
+time, without having to worry about load balancing. 
+
 .. autosummary::
    kedro_partitioned.pipeline.multinode.multinode
    kedro_partitioned.pipeline.multinode.multipipeline
@@ -42,6 +47,12 @@ DataSets
 .. autosummary::
    kedro_partitioned.extras.datasets.concatenated_dataset.ConcatenatedDataSet
    kedro_partitioned.extras.datasets.concatenated_dataset.PandasConcatenatedDataSet
+   kedro_partitioned.io.path_safe_partitioned_dataset.PathSafePartitionedDataSet
+
+.. note::
+   it is recommended to use PathSafePartitionedDataSet instead of PartitionedDataSet,
+   for every step parallelism scenario. This is because, handling path safety is
+   mandatory for the multinode feature to work properly.
 
 Decorators
 ******************

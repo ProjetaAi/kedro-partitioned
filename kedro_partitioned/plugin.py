@@ -103,4 +103,4 @@ class MultiNodeEnabler:
                 )
 
 
-multinode_enabler = MultiNodeEnabler(),
+multinode_enabler = MultiNodeEnabler()

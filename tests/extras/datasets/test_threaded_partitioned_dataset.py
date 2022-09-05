@@ -2,7 +2,7 @@
 import pathlib
 from typing import List
 import pytest
-from pytest_mock import MockerFixture
+from pytest_mock import MockFixture
 from .mocked_dataset import MockedDataSet
 from kedro_partitioned.extras.datasets.threaded_partitioned_dataset import (
     ThreadedPartitionedDataSet)
@@ -12,11 +12,11 @@ BASE_PATH = pathlib.Path.cwd() / 'a'
 
 
 @pytest.fixture(autouse=True)
-def mock_load(mocker: MockerFixture):
+def mock_load(mocker: MockFixture):
     """Overwrites ThreadedPartitionedDataSet load.
 
     Args:
-        mocker (MockerFixture): pytest-mock fixture
+        mocker (MockFixture): pytest-mock fixture
     """
     def _list_partitions(self: ThreadedPartitionedDataSet) -> List[str]:
         return [(BASE_PATH / 'a' / sp).as_posix()

@@ -4,7 +4,7 @@ from functools import partial
 from typing import List
 import pandas as pd
 import pytest
-from pytest_mock import MockerFixture
+from pytest_mock import MockFixture
 from kedro_partitioned.extras.datasets.concatenated_dataset import (
     PandasConcatenatedDataSet
 )
@@ -15,11 +15,11 @@ PARTITIONS = ['a/a', 'a/b', 'a/c']
 
 
 @pytest.fixture(autouse=True)
-def mock_load(mocker: MockerFixture):
+def mock_load(mocker: MockFixture):
     """Overwrites PandasConcatenatedDataSet load.
 
     Args:
-        mocker (MockerFixture): pytest-mock fixture
+        mocker (MockFixture): pytest-mock fixture
     """
     def _list(self: PandasConcatenatedDataSet) -> List[str]:
         return PARTITIONS
