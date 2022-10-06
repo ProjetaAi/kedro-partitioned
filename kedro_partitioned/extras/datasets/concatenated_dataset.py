@@ -1,7 +1,7 @@
 """A DataSet that concatenates partitioned datasets."""
 from concurrent.futures import ThreadPoolExecutor
 import importlib
-from typing import Any, Callable, Dict, Generic, Iterable, Type, TypeVar, Union
+from typing import Any, Callable, Dict, Generic, Iterable, Tuple, Type, TypeVar, Union
 
 import pandas as pd
 from kedro_partitioned.io.path_safe_partitioned_dataset import (
@@ -109,15 +109,15 @@ class ConcatenatedDataSet(PathSafePartitionedDataSet, Generic[T]):
             pass
         return fn
 
-    def _apply_preprocess(self, data: T) -> T:
-        return self.preprocess(data, **self.preprocess_kwargs)
+    def _load_partition(self, data: Tuple[str, Callable[[], T]]) -> T:
+        self._logger.info(f"Processing partition {data[0]}")
+        return self.preprocess(data[1](), **self.preprocess_kwargs)
 
     def _load(self) -> T:
         partitions = super()._load()
+        loaders = {k: v for k, v in partitions.items() if self.filter(k)}
         with ThreadPoolExecutor() as pool:
-            loaders = [v for k, v in partitions.items() if self.filter(k)]
-            data_list = list(pool.map(lambda x: self._apply_preprocess(x()),
-                                      loaders))
+            data_list = list(pool.map(self._load_partition, loaders.items()))
         return self.concat_func(data_list)
 
 
