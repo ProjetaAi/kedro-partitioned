@@ -12,6 +12,7 @@ class ThreadedPartitionedDataSet(PathSafePartitionedDataSet):
     """Same implementation as the PartitionedDataSet, but using threads."""
 
     def _save_partition(self, partition: Tuple[str, Any]):
+        self._logger.info(f"Saving partition {partition[0]}")
         partition_id, partition_data = partition
         kwargs = deepcopy(self._dataset_config)
         partition_path = self._partition_to_path(partition_id)
