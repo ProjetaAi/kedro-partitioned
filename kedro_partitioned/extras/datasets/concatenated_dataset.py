@@ -1,7 +1,17 @@
 """A DataSet that concatenates partitioned datasets."""
 from concurrent.futures import ThreadPoolExecutor
 import importlib
-from typing import Any, Callable, Dict, Generic, Iterable, Tuple, Type, TypeVar, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generic,
+    Iterable,
+    Tuple,
+    Type,
+    TypeVar,
+    Union
+)
 
 import pandas as pd
 from kedro_partitioned.io.path_safe_partitioned_dataset import (
@@ -167,7 +177,7 @@ class PandasConcatenatedDataSet(ConcatenatedDataSet[PandasDataSets]):
         >>> ds.filter('a/b/c.csv')
         False
         >>> df = pd.DataFrame({'a': [1]})
-        >>> ds._apply_preprocess(df)
+        >>> ds._load_partition(('test', lambda: df))
            b
         0  1
 
