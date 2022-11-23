@@ -1,0 +1,21 @@
+name: Docs
+on:
+  push:
+    branches:
+    - feature/docs
+jobs:
+  tag:
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get the version
+        run:
+          tag="v$(cat kedro_partitioned/__init__.py | \
+                  grep __version__ | \
+                  sed "s/__version__ = '\(.*\)'/\1/")"
+          echo "TAG=$tag" >> $GITHUB_ENV
+      - uses: rickstaa/action-create-tag@v1
+        with:
+          tag: ${{ env.TAG }}
+          message: "Latest release"
