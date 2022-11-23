@@ -12,7 +12,7 @@ Kedro Plugin focused on extending and helping the user to process partitioned da
 
 ## Usage:
 
-Read our [docs](https://projetaai.github.io/kedro-partitioned/).
+Read our [docs](https://kedro-partitioned.readthedocs.io/).
 
 ## Getting Started
 
