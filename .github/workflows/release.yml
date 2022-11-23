@@ -16,24 +16,25 @@ jobs:
       - name: Generating wheel
         run: python -m build --wheel
       - name: Uploading to pypy
-        run: twine upload ./dist/* --non-interactive --username nickolasrm --password "${{ secrets.PYPI_PASSWORD }}"
-  docs:
+        run: |
+          twine upload ./dist/* \
+            --non-interactive \
+            --username nickolasrm \
+            --password "${{ secrets.PYPI_PASSWORD }}"
+  tag:
     runs-on: ubuntu-latest
-    needs:
-      - publish
     steps:
-    - uses: actions/setup-python@v2
-    - uses: actions/checkout@master
-      with:
-        fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
-    - name: Install docs dependencies
-      run: |
-        pip install .[docs]
-        pip install git+https://github.com/revitron/revitron-sphinx-theme.git@master
-    - name: Build and Commit
-      uses: sphinx-notes/pages@v2
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: gh-pages
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y grep sed
+      - name: Get the version
+        run: |
+          tag="v$(cat kedro_partitioned/__init__.py | \
+                  grep __version__ | \
+                  sed "s/__version__ = '\(.*\)'/\1/")"
+          echo "TAG=$tag" >> $GITHUB_ENV
+      - uses: rickstaa/action-create-tag@v1
+        with:
+          tag: ${{ env.TAG }}
