@@ -21,4 +21,3 @@ jobs:
       - uses: rickstaa/action-create-tag@v1
         with:
           tag: ${{ env.TAG }}
-          message: ${{ github.event.workflow_run.head_commit.message }}
