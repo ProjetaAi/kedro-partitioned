@@ -5,7 +5,6 @@ on:
     - feature/docs
 jobs:
   tag:
-    needs: publish
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
